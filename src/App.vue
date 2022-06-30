@@ -1,7 +1,7 @@
 <template>
   <div id="app">
       <!-- ascolto l evento passato da TheHeader.vue -->
-      <TheHeader @searchFilms="onSearchFilms"></TheHeader>
+      <TheHeader @searchFilms="onSearchFilms" :genres-films="genresFilms" :genres-series="genresSeries"></TheHeader>
 
       <!-- passo la prop che contiene la lista dei film a TheMain.vue -->
       <TheMain :films-list="filmsList" :series-list="seriesList"></TheMain>
@@ -24,7 +24,11 @@ export default {
     return{
       filmsList : [],
       seriesList : [],
-      searchFilms: ""
+      searchFilms: "",
+      
+      genresFilms: [],
+      genresSeries: [],
+
     }
   },
   methods:{
@@ -50,6 +54,24 @@ export default {
         
       })
     },
+    fetchGenresFilms(type){
+      axios.get("https://api.themoviedb.org/3/genre/" + type + "/list",{
+        params:{
+          api_key:"943dadb8ae5a51623bdae45efd2fc1ad",
+          language: "it-IT"
+        }
+      }).then(resp => {
+        // salvo la risposta dell api all interno di un data che ho chiamato filmsList
+        if (type === "movie") {
+          this.genresFilms = resp.data.genres
+        }
+        else{
+          this.genresSeries = resp.data.genres
+        }
+        
+      })
+    },
+    
     // quando faccio la ricerca del film salvo in un data il dato che ci ha passato TheHeader.vue e invoco la chiamata api passando per argomento il dato appena salvato
     onSearchFilms(searchFilms){
       
@@ -57,12 +79,12 @@ export default {
       this.fetchFilmsList("movie")
       this.fetchFilmsList("tv")
 
-
-    }
+    },
+    
   },
   
   mounted(){
-    
+    this.fetchGenresFilms("movie")
   }
 }
 </script>

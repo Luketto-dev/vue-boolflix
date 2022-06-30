@@ -1,5 +1,6 @@
 <template>
-    <div class="movie h-100 position-relative" >
+    <div class="movie h-100 position-relative" 
+        @mouseenter="fetchGenresFilm(infoFilm.title ? 'movie' : 'tv'), fetchactorsfilm(infoFilm.title ? 'movie' : 'tv')">
         <div class="poster-img h-100">
             <img class="w-100 h-100" :src="urlPoster" alt="">
         </div>
@@ -7,21 +8,33 @@
         <div class="movie-overlay">
         
             <div class="movie-title">
-                <h5>Titolo film: {{movieTitle}}</h5>
+                <h5 class="fw-bold">Titolo film: {{movieTitle}}</h5>
             </div>
             <div class="original-title">
-                Titolo originale: {{movieOriginalTitle}}
+                <span class="fw-bold">Titolo originale: </span>  
+                <span>{{movieOriginalTitle}}</span> 
             </div>
             <div class="language" >
-                Lingua: <span class="fi" :class="'fi-' + countryFlag"></span>
+                <span class="fw-bold">Lingua: </span> 
+                <span class="fi" :class="'fi-' + countryFlag"></span>
             </div>
-            <span>Voto: </span>
-            <span class="vote" v-for="i in 5" :key="i">
-                <i v-if="i <= voteUpdate(infoFilm.vote_average)" class="fa-solid fa-star text-warning"></i>
-                <i v-else class="fa-regular fa-star"></i>
-            </span>
+            <div class="vote">
+                <span class="fw-bold">Voto: </span>
+                <span v-for="i in 5" :key="i">
+                    <i v-if="i <= voteUpdate(infoFilm.vote_average)" class="fa-solid fa-star text-warning"></i>
+                    <i v-else class="fa-regular fa-star"></i>
+                </span>
+            </div>
+            <div class="genres" >
+                <span class="fw-bold">Genere: </span>  
+                <span v-for="(genre, i) in detailsGenres" :key="i">{{genre.name}}, </span>
+            </div>
+            <div class="cast">
+                <span class="fw-bold">Cast: </span>
+                <span v-for="(actor, i) in castFilm" :key="i">{{actor.name}}, </span>
+            </div>
             <div class="description">
-                Descrizione: 
+                <span class="fw-bold">Descrizione: </span>
                 <span v-if="infoFilm.overview">{{infoFilm.overview}}</span>
                 <span v-else>Descrizione non disponibile</span>
             </div>
@@ -33,11 +46,13 @@
 </template>
 
 <script>
+import axios from "axios"
 
 export default {
     data(){
         return{
-            detailsGenres: [], 
+            detailsGenres: [],
+            castFilm : []
         }
     },
     props:{
@@ -63,7 +78,8 @@ export default {
                 "en" : "us",
                 "ja" : "jp",
                 "zh" : "cn",
-                "ko" : "kr"
+                "ko" : "kr",
+                "el" : "gr"
             }
             if (langsMaps[this.infoFilm.original_language]) {
                 return langsMaps[this.infoFilm.original_language]
@@ -78,14 +94,38 @@ export default {
             
             return "/imgError.png"
         },
+        
 
     },
     methods:{
         voteUpdate(vote){
-            return Math.round(vote/2)
+            return Math.ceil(vote/2)
         },
-        
-        
+
+        fetchGenresFilm(type){
+            axios.get("https://api.themoviedb.org/3/" + type + "/" + this.infoFilm.id,{
+            params:{
+                api_key:"943dadb8ae5a51623bdae45efd2fc1ad",
+                language: "it-IT"
+            }
+        }).then(resp => {
+            this.detailsGenres = resp.data.genres           
+        })
+
+        },
+
+        fetchactorsfilm(type){
+            axios.get("https://api.themoviedb.org/3/" + type + "/" + this.infoFilm.id + "/credits",{
+            params:{
+                api_key:"943dadb8ae5a51623bdae45efd2fc1ad",
+                language: "it-IT"
+            }
+        }).then(resp => {
+            this.castFilm = resp.data.cast.slice(0,5)
+            
+        })
+        },
+
     },
     mounted(){
         
