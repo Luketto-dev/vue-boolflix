@@ -1,8 +1,9 @@
 <template>
-    <div class="container">
+    <main class="main bg-dark">
         <!-- ciclo sulla lista dei film -->
         <div class="films-list">
-            <div class="row row-cols-6">
+            <h2 v-if="filmsList">Film</h2>
+            <div class="row row-cols-6 gy-3">
                 <div class="col" v-for="(film,i) in filmsList" :key="i">
                     <!-- passo come prop a cardMovie il singolo film su cui sto ciclando -->
                     <CardMovie :info-film="film"></CardMovie>
@@ -11,6 +12,7 @@
         </div>
          
         <div class="series-list pt-5">
+            <h2 v-if="seriesList">Serie tv</h2>
             <div class="row row-cols-6">
                 <div class="col" v-for="(serie,i) in seriesList" :key="i">
                     <!-- passo come prop a cardMovie la singola serie tv su cui sto ciclando -->
@@ -19,7 +21,7 @@
             </div>
         </div>
 
-    </div>
+    </main>
 </template>
 
 <script>
@@ -39,5 +41,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.main{
+    flex-grow: 1;
+    overflow: auto;
+    padding: 2rem 1rem
+}
 </style>
