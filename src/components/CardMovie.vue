@@ -1,5 +1,5 @@
 <template>
-    <div class="movie h-100 position-relative">
+    <div class="movie h-100 position-relative" @mouseenter="onMouseEnter()">
         <div class="poster-img h-100">
             <img class="w-100 h-100" :src="urlPoster" alt="">
         </div>
@@ -33,7 +33,13 @@
 </template>
 
 <script>
+import axios from "axios"
 export default {
+    data(){
+        return{
+            detailsGenres: [], 
+        }
+    },
     props:{
         // prop inviata da themain.vue che contiene le informazioni di ogni singolo film
         infoFilm: Object,
@@ -78,7 +84,22 @@ export default {
         voteUpdate(vote){
             return Math.round(vote/2)
         },
+        onMouseEnter(type){
+            axios.get("https://api.themoviedb.org/3/" + type + "/" + this.infoFilm.id,{
+            params:{
+                api_key:"943dadb8ae5a51623bdae45efd2fc1ad",
+                language: "it-IT"
+            }
+        }).then(resp => {
+            this.detailsGenres = resp.data.genres
+            console.log(this.detailsGenres)
+        })
+
+        }
         
+    },
+    mounted(){
+        this.onMouseEnter("movie")
     }
 }
 </script>

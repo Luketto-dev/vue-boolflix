@@ -30,6 +30,9 @@ export default {
   methods:{
     // chiamata api, l argomento lo prendiamo dall emit che ci ha passato TheHeader.vue 
     fetchFilmsList(type){
+      if (!this.searchFilms) {
+        return
+      }
       axios.get("https://api.themoviedb.org/3/search/" + type,{
         params:{
           api_key:"943dadb8ae5a51623bdae45efd2fc1ad",
