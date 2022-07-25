@@ -11,7 +11,7 @@
                 </select>
                 <input type="text" class="input-search" placeholder="ricerca un film per titolo" v-model="searchFilms">
                 <!-- al cilck del pulasante faccio un emit verso App.vue per passare quello che l utente ha inserito nell input  -->
-                <button class="btn btn-outline-secondary" type="button" @click="SearchTextFilms">Cerca</button>
+                <button class="btn btn-outline-secondary" type="button" @click=" SearchTextFilms">Cerca</button>
             </div>
         </div>
     </header>
@@ -22,7 +22,7 @@ export default {
     data(){
         return{
             searchFilms:"",
-            searchGenres:""
+            searchGenres:"",
         }
     },
     props:{
@@ -36,7 +36,8 @@ export default {
         },
         searchGenresFilms(){
             this.$emit("searchGenres", this.searchGenres)
-        }
+        },
+        
     }
 }
 </script>

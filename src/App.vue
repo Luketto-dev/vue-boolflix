@@ -1,10 +1,10 @@
 <template>
   <div id="app">
       <!-- ascolto l evento passato da TheHeader.vue -->
-      <TheHeader @searchFilms="onSearchFilms" :genres-films="genresFilms" :genres-series="genresSeries"></TheHeader>
+      <TheHeader @searchFilms="onSearchFilms" @searchGenres="onSearchGenres" :genres-films="genresFilms" :genres-series="genresSeries"></TheHeader>
 
       <!-- passo la prop che contiene la lista dei film a TheMain.vue -->
-      <TheMain :films-list="filmsList" :series-list="seriesList"></TheMain>
+      <TheMain :show-films-list="showFilmsList" :films-list="filmsList" :series-list="seriesList"></TheMain>
     
   </div>
 </template>
@@ -25,16 +25,21 @@ export default {
       filmsList : [],
       seriesList : [],
       searchFilms: "",
+      searchGenres: "",
+      
       
       genresFilms: [],
       genresSeries: [],
+      showFilmsList: false,
+
+      
 
     }
   },
   methods:{
-    // chiamata api, l argomento lo prendiamo dall emit che ci ha passato TheHeader.vue 
+    // chiamata api, la query lo prendiamo dall emit che ci ha passato TheHeader.vue 
     fetchFilmsList(type){
-      if (!this.searchFilms) {
+      if (!this.searchFilms ) {
         return
       }
       axios.get("https://api.themoviedb.org/3/search/" + type,{
@@ -61,7 +66,7 @@ export default {
           language: "it-IT"
         }
       }).then(resp => {
-        // salvo la risposta dell api all interno di un data che ho chiamato filmsList
+        // salvo la risposta dell api all interno di un data che ho chiamato genresFilms
         if (type === "movie") {
           this.genresFilms = resp.data.genres
         }
@@ -75,11 +80,22 @@ export default {
     // quando faccio la ricerca del film salvo in un data il dato che ci ha passato TheHeader.vue e invoco la chiamata api passando per argomento il dato appena salvato
     onSearchFilms(searchFilms){
       
+      this.showFilmsList = false
       this.searchFilms = searchFilms
       this.fetchFilmsList("movie")
       this.fetchFilmsList("tv")
 
+      setTimeout(this.showingFilmsList, 200);
+
     },
+    onSearchGenres(searchGenres){
+      this.searchGenres = searchGenres
+    },
+
+    showingFilmsList(){
+      this.showFilmsList = true
+    }
+    
     
   },
   
@@ -91,5 +107,6 @@ export default {
 
 <style lang="scss">
 @import "./assets/scss/main.scss";
+
 
 </style>
